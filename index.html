@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🧸 The Teddy Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #2b0d1f, #14080f);
+  color: white;
+  overflow-x: hidden;
+  transition: background 0.8s ease;
+  touch-action: pan-y;
+}
+
+/* SECTION CONTROL */
+.section {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  z-index: 5;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.section.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* === SECTION 1 === */
+#section1 {
+  position: relative;
+}
+
+.alert {
+  font-size: 28px;
+  font-weight: 600;
+  animation: flash 1s infinite;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.teddy-drop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -300px);
+  font-size: 120px;
+  transition: transform 1.2s cubic-bezier(.25, .8, .25, 1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.teddy-drop.drop {
+  transform: translate(-50%, -50%);
+}
+
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  50% { transform: translateX(8px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+.dialogue {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 15px 25px;
+  border-radius: 20px;
+  font-family: 'Great Vibes', cursive;
+  font-size: 26px;
+  opacity: 0;
+  transition: all 0.8s ease;
+  white-space: nowrap;
+  z-index: 11;
+}
+
+.dialogue.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* === SECTION 2 === */
+.instructionScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at top, #2a0f18, #12060b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: opacity 0.5s ease;
+}
+
+.instructionBox {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 400px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(255, 100, 150, 0.2);
+}
+
+.instructionBox h1 {
+  margin-bottom: 15px;
+  font-size: 32px;
+}
+
+.instructionBox ul {
+  text-align: left;
+  margin: 20px 0;
+  padding-left: 20px;
+  opacity: .9;
+  line-height: 1.8;
+}
+
+.container {
+  text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+}
+
+h1 {
+  font-weight: 300;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+  opacity: .8;
+  font-family: 'Great Vibes', cursive;
+  font-size: 48px;
+  text-align: center;
+}
+
+canvas {
+  background: transparent;
+  cursor: crosshair;
+  margin: 20px 0;
+  border-radius: 20px;
+  touch-action: none;
+}
+
+.loveBarContainer {
+  width: 250px;
+  height: 10px;
+  background: rgba(255, 255, 255, .2);
+  margin: 10px auto 20px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.loveBar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff4f81, #ff9bb3);
+  transition: width .6s ease;
+}
+
+.message {
+  max-width: 600px;
+  margin: 20px auto;
+  font-size: 18px;
+  line-height: 1.7;
+  opacity: 0;
+  transition: all 1s ease;
+  text-align: center;
+}
+
+.showMessage {
+  opacity: 1;
+}
+
+.glow {
+  animation: glowPulse 1.5s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { filter: drop-shadow(0 0 5px #ff9bb3); }
+  to { filter: drop-shadow(0 0 25px #ff5c8a); }
+}
+
+/* === SECTION 3 === */
+#introScreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.introBox {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  padding: 50px;
+  border-radius: 25px;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+  max-width: 500px;
+  animation: fadeIn 1.5s ease;
+}
+
+.introBox h1 {
+  margin-bottom: 20px;
+}
+
+.instructions {
+  margin: 20px 0;
+  line-height: 1.8;
+  font-size: 16px;
+  text-align: left;
+}
+
+#game {
+  position: relative;
+  width: 90vw;
+  max-width: 800px;
+  height: 80vh;
+  max-height: 600px;
+  margin: 0 auto;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  border: 3px solid hotpink;
+  box-shadow: 0 0 40px hotpink;
+  touch-action: none;
+}
+
+#teddy3 {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  font-size: 38px;
+  cursor: pointer;
+  transition: 0.1s;
+  filter: drop-shadow(0 0 10px yellow);
+  z-index: 10;
+  touch-action: none;
+}
+
+#home {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-size: 40px;
+  animation: pulse 1.5s infinite;
+}
+
+.wall {
+  position: absolute;
+  background: rgba(255, 100, 120, 0.3);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.fog {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  animation: fogMove 6s infinite alternate;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fogMove {
+  from { transform: translateX(-10px); }
+  to { transform: translateX(10px); }
+}
+
+#winScreen {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 28px;
+  z-index: 50;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Mobile game controls */
+.mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  gap: 10px;
+}
+
+.control-btn {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 100, 150, 0.3);
+  border: 2px solid rgba(255, 100, 150, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.control-btn:active {
+  background: rgba(255, 100, 150, 0.5);
+  transform: scale(0.95);
+}
+
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 60px);
+  grid-template-rows: repeat(3, 60px);
+  gap: 5px;
+}
+
+.dpad .control-btn:nth-child(1) { grid-column: 2; grid-row: 1; } /* Up */
+.dpad .control-btn:nth-child(2) { grid-column: 1; grid-row: 2; } /* Left */
+.dpad .control-btn:nth-child(3) { grid-column: 3; grid-row: 2; } /* Right */
+.dpad .control-btn:nth-child(4) { grid-column: 2; grid-row: 3; } /* Down */
+
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: flex;
+  }
+}
+
+/* === SECTION 4 === */
+.teddy {
+  font-size: 130px;
+  transition: transform .4s ease;
+  filter: drop-shadow(0 0 25px rgba(255, 200, 255, .6));
+  display: inline-block;
+}
+
+.controls {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  text-align: left;
+  max-width: 400px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-size: 16px;
+}
+
+input[type=range] {
+  width: 100%;
+  margin-top: 8px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ff4f81;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ff4f81;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+select {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+  width: 100%;
+  font-size: 16px;
+}
+
+/* === SECTION 5 === */
+.teddy-wrapper {
+  position: relative;
+  margin: 40px 0;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: float 4s ease-in-out infinite;
+}
+
+.teddy-clickable {
+  font-size: 130px;
+  cursor: pointer;
+  transition: transform .4s ease;
+  filter: drop-shadow(0 0 25px rgba(255, 200, 255, .6));
+  position: relative;
+  z-index: 5;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.teddy-clickable:hover {
+  transform: scale(1.08);
+}
+
+.teddy-clickable:active {
+  transform: scale(0.95);
+}
+
+.progress-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, .1);
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid hotpink;
+  clip-path: circle(0% at 50% 50%);
+  transition: clip-path .4s ease;
+}
+
+.heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 50px;
+  transition: all .4s ease;
+  pointer-events: none;
+}
+
+.progress-text {
+  opacity: .7;
+  letter-spacing: 1px;
+  margin-top: 20px;
+}
+
+.final-message {
+  max-width: 700px;
+  opacity: 0;
+  font-family: 'Great Vibes', cursive;
+  font-size: 2rem;
+  padding: 20px;
+  transition: opacity 3s ease;
+  text-align: center;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.3); }
+}
+
+.sparkle {
+  position: fixed;
+  font-size: 18px;
+  animation: rise 3s linear forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes rise {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-120px); }
+}
+
+.dissolve {
+  animation: dissolve 2s forwards;
+}
+
+@keyframes dissolve {
+  0% { opacity: 1; filter: blur(0); }
+  100% { opacity: 0; filter: blur(25px); }
+}
+
+/* === SECTION 6 === */
+.love-note {
+  margin-top: 25px;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 1s ease;
+  color: #ffd6e0;
+  max-width: 600px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* === GLOBAL === */
+button {
+  margin-top: 30px;
+  padding: 14px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 40px;
+  background: linear-gradient(45deg, #ff4d6d, #ff8fa3);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255, 0, 90, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 0, 90, 0.7);
+}
+
+button:active {
+  transform: scale(1.05);
+}
+
+.sparkleHeart {
+  position: fixed;
+  font-size: 20px;
+  animation: rise 3s linear forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.bgHeart {
+  position: fixed;
+  font-size: 18px;
+  color: #ff4f81;
+  opacity: .15;
+  animation: bgFloat 10s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes bgFloat {
+  from { transform: translateY(100vh); }
+  to { transform: translateY(-10vh); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 36px;
+  }
+  
+  .alert {
+    font-size: 22px;
+  }
+  
+  .teddy-drop {
+    font-size: 80px;
+  }
+  
+  .dialogue {
+    font-size: 20px;
+  }
+  
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .instructionBox, .introBox {
+    padding: 30px;
+    max-width: 90%;
+  }
+  
+  button {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SECTION 1: Emergency Teddy -->
+<div id="section1" class="section active">
+  <div class="alert">⚠️ Boyfriend detected low on hugs.</div>
+  <button onclick="sendTeddy()">🧸 Send Emergency Teddy</button>
+  <div class="teddy-drop" id="teddy1">🧸</div>
+  <div class="dialogue" id="dialogue">"I came because she misses you."</div>
+</div>
+
+<!-- SECTION 2: Paint The Teddy -->
+<div id="section2" class="section">
+  <div class="instructionScreen" id="instructionScreen">
+    <div class="instructionBox">
+      <h1>🧸 Emotion Paint Teddy</h1>
+      <p>
+        This is not just a teddy.<br><br>
+        It's waiting for your love.
+      </p>
+      <ul>
+        <li>🖱️ Click and drag on the teddy</li>
+        <li>💓 Paint his heart</li>
+        <li>🤍 Warm his arms</li>
+        <li>✨ Bring sparkle to his eyes</li>
+      </ul>
+      <p>When he's fully colored... something special happens.</p>
+      <button onclick="startPaintGame()">💖 Start the Game</button>
+    </div>
+  </div>
+
+  <div class="container" id="gameContainer" style="display:none;">
+    <h1>🎨 Paint The Teddy With Love</h1>
+    <div class="loveBarContainer">
+      <div class="loveBar" id="loveBar"></div>
+    </div>
+    <canvas id="teddyCanvas" width="350" height="450"></canvas>
+    <div class="message" id="finalMessage">"You give color to what's soft." 💖</div>
+    <div class="message" id="partMessage"></div>
+  </div>
+</div>
+
+<!-- SECTION 3: Rescue Game -->
+<div id="section3" class="section">
+  <div id="introScreen">
+    <div class="introBox">
+      <h1>🧸 Rescue the Lost Teddy</h1>
+      <p>The teddy is lost in rain, snow, ego & misunderstandings.</p>
+      <div class="instructions">
+        ➜ Use <b>Arrow Keys</b> or touch controls to move 🧸 <br><br>
+        ➜ Avoid the glowing walls (ego) <br><br>
+        ➜ Pass through the fog (misunderstanding) <br><br>
+        ➜ Reach ❤️ Home safely
+      </div>
+      <button onclick="startRescueGame()">Start the Game 💖</button>
+    </div>
+  </div>
+
+  <div id="game" style="display:none;">
+    <div id="teddy3">🧸</div>
+    <div id="home">❤️</div>
+    <div class="wall" style="top:120px; left:200px; width:250px; height:20px;"></div>
+    <div class="wall" style="top:260px; left:80px; width:20px; height:220px;"></div>
+    <div class="wall" style="top:420px; left:250px; width:300px; height:20px;"></div>
+    <div class="fog" style="top:180px; left:380px; width:220px; height:120px;"></div>
+    <div id="winScreen">
+      ✨ You chose love over ego ✨<br>
+      ❤️ She is Home ❤️
+      <button onclick="restart()">Play Again</button>
+    </div>
+  </div>
+  
+  <!-- Mobile Controls -->
+  <div class="mobile-controls" id="mobileControls" style="display:none;">
+    <div class="dpad">
+      <div class="control-btn" data-direction="up">▲</div>
+      <div class="control-btn" data-direction="left">◄</div>
+      <div class="control-btn" data-direction="right">►</div>
+      <div class="control-btn" data-direction="down">▼</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: Build-A-Teddy -->
+<div id="section4" class="section">
+  <div class="container">
+    <h1>🧸 Build-A-Teddy 💖</h1>
+    <div class="teddy" id="teddy4">🧸</div>
+    <div class="controls">
+      <label>❤️ Heart Size</label>
+      <input type="range" id="heartSize" min="1" max="2" step="0.1" value="1">
+      <label>🤗 Hug Strength</label>
+      <input type="range" id="hugStrength" min="1" max="2" step="0.1" value="1">
+      <label>🎭 Personality</label>
+      <select id="personality">
+        <option value="Soft & Shy">Soft & Shy 🥺</option>
+        <option value="Protective">Protective 💪</option>
+        <option value="Clingy">Clingy 💕</option>
+        <option value="Playful">Playful 😋</option>
+      </select>
+      <button onclick="buildTeddy()">✨ Build Teddy</button>
+    </div>
+    <div class="message" id="message"></div>
+  </div>
+  <audio id="heartbeat">
+    <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mpeg">
+  </audio>
+</div>
+
+<!-- SECTION 5: Fill The Heart -->
+<div id="section5" class="section">
+  <div class="container">
+    <h1 id="intro">"You don't need this teddy."</h1>
+    <div class="teddy-wrapper">
+      <div class="progress-ring">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="teddy-clickable" id="teddy5">🧸</div>
+      <div class="heart" id="heart">💖</div>
+    </div>
+    <div class="progress-text" id="progressText">Click the teddy to fill its heart ✨</div>
+    <div class="final-message" id="finalMessage2">
+      You don't need this teddy…<br>
+      because you already have someone<br>
+      who chooses you,<br>
+      who protects your heart,<br>
+      and who will never stop holding you —<br>
+      even on the days you forget how lovable you are.<br><br>
+      🧸 Happy Teddy Day, my favorite human 💕
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: Final Message -->
+<div id="section6" class="section">
+  <div class="container">
+    <div class="teddy">🧸</div>
+    <h1>Happy Teddy Day, My Love</h1>
+    <div class="message" style="opacity:1;">
+      I'm really sorry for fighting with you.<br><br>
+      You were unwell… and instead of taking care of you,
+      I let my emotions win because I missed you too much.<br><br>
+      I didn't fight because I don't love you.
+      I fought because I wanted your time,
+      your attention,
+      your warmth.<br><br>
+      And sometimes when I miss you too much,
+      it comes out the wrong way.
+    </div>
+    <button onclick="showLove()">Click if you forgive me 💖</button>
+    <div class="love-note" id="loveNote">
+      You mean more to me than my ego.<br>
+      More than one small fight.<br>
+      More than one emotional moment.<br><br>
+      You are my comfort.<br>
+      My safe place.<br>
+      My favorite person.<br><br>
+      I love you endlessly. 🧸❤️
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // === SECTION 1: Emergency Teddy ===
+  function playAlarm() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+      oscillator.connect(ctx.destination);
+      oscillator.start();
+      setTimeout(() => oscillator.stop(), 300);
+    } catch (e) {
+      console.log("Audio not supported");
+    }
+  }
+
+  window.sendTeddy = function() {
+    const bgMusic = document.getElementById("bgMusic");
+    bgMusic.volume = 0.5; 
+    bgMusic.play().catch(() => {});
+
+    playAlarm();
+    const teddy1 = document.getElementById("teddy1");
+    const dialogue = document.getElementById("dialogue");
+    const section1 = document.getElementById("section1");
+    
+    teddy1.classList.add("drop");
+    section1.classList.add("shake");
+    
+    setTimeout(() => {
+      dialogue.classList.add("show");
+      createHearts();
+    }, 1000);
+    
+    setTimeout(() => {
+      section1.classList.remove("shake");
+    }, 1400);
+    
+    setTimeout(() => {
+      if (!document.getElementById("paintBtn")) {
+        let btn = document.createElement("button");
+        btn.id = "paintBtn";
+        btn.innerText = "Start Painting The Teddy 💖";
+        btn.onclick = () => goToSection("section2");
+        btn.style.position = "relative";
+        btn.style.marginTop = "250px";
+        section1.appendChild(btn);
+      }
+    }, 2000);
+  }
+
+  function createHearts() {
+    for (let i = 0; i < 20; i++) {
+      setTimeout(() => {
+        const heart = document.createElement("div");
+        heart.classList.add("sparkleHeart");
+        heart.innerHTML = "❤";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.top = "70%";
+        heart.style.fontSize = (Math.random() * 20 + 15) + "px";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 3000);
+      }, i * 100);
+    }
+  }
+
+  // === SECTION 2: Paint The Teddy ===
+  const canvas = document.getElementById("teddyCanvas");
+  const ctx = canvas.getContext("2d");
+  
+  let paintedParts = { heart: false, arms: false, eyes: false };
+  let rescueButtonCreated = false;
+  let isDragging = false;
+
+  function drawTeddy() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Body
+    ctx.fillStyle = "#8d5a4f";
+    ctx.beginPath();
+    ctx.arc(175, 230, 90, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Head
+    ctx.beginPath();
+    ctx.arc(175, 120, 70, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Ears
+    ctx.beginPath();
+    ctx.arc(110, 60, 35, 0, Math.PI * 2);
+    ctx.arc(240, 60, 35, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Arms
+    ctx.fillStyle = paintedParts.arms ? "#ffb6c1" : "#6b3d34";
+    ctx.beginPath();
+    ctx.arc(60, 220, 40, 0, Math.PI * 2);
+    ctx.arc(290, 220, 40, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Heart
+    ctx.fillStyle = paintedParts.heart ? "#ff4f81" : "#5a2a3a";
+    ctx.beginPath();
+    ctx.moveTo(175, 230);
+    ctx.bezierCurveTo(145, 200, 115, 230, 175, 280);
+    ctx.bezierCurveTo(235, 230, 205, 200, 175, 230);
+    ctx.fill();
+    
+    // Eyes
+    ctx.fillStyle = paintedParts.eyes ? "#ffffff" : "#000";
+    ctx.beginPath();
+    ctx.arc(150, 110, 10, 0, Math.PI * 2);
+    ctx.arc(200, 110, 10, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Pupils
+    if (paintedParts.eyes) {
+      ctx.fillStyle = "#000";
+      ctx.beginPath();
+      ctx.arc(150, 110, 5, 0, Math.PI * 2);
+      ctx.arc(200, 110, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  drawTeddy();
+
+  function handlePaintInput(x, y, clientX, clientY) {
+    // Heart area
+    if (x > 130 && x < 220 && y > 210 && y < 300) {
+      if (!paintedParts.heart) {
+        paintedParts.heart = true;
+        showPartMessage("I feel something warm... 💓");
+      }
+      createHeartParticles(clientX, clientY);
+    }
+    
+    // Arms area
+    if ((x < 120 && y > 180 && y < 260) || (x > 230 && y > 180 && y < 260)) {
+      if (!paintedParts.arms) {
+        paintedParts.arms = true;
+        showPartMessage("These arms are ready to hold you... 🤍");
+      }
+    }
+    
+    // Eyes area
+    if (y > 90 && y < 140 && x > 120 && x < 230) {
+      if (!paintedParts.eyes) {
+        paintedParts.eyes = true;
+        showPartMessage("I can finally see you clearly... ✨");
+      }
+    }
+    
+    drawTeddy();
+    updateLoveBar();
+    checkCompletion();
+  }
+
+  canvas.addEventListener("mousedown", () => isDragging = true);
+  canvas.addEventListener("mouseup", () => isDragging = false);
+  canvas.addEventListener("mouseleave", () => isDragging = false);
+  
+  canvas.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    handlePaintInput(x, y, e.clientX, e.clientY);
+  });
+
+  // Touch support for mobile
+  canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    isDragging = true;
+  });
+  
+  canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    isDragging = false;
+  });
+  
+  canvas.addEventListener("touchmove", (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    handlePaintInput(x, y, touch.clientX, touch.clientY);
+  });
+
+  function updateLoveBar() {
+    let percent = 0;
+    if (paintedParts.heart) percent += 40;
+    if (paintedParts.arms) percent += 30;
+    if (paintedParts.eyes) percent += 30;
+    document.getElementById("loveBar").style.width = percent + "%";
+  }
+
+  function showPartMessage(text) {
+    const msg = document.getElementById("partMessage");
+    msg.innerText = text;
+    msg.classList.add("showMessage");
+    setTimeout(() => msg.classList.remove("showMessage"), 2500);
+  }
+
+  function checkCompletion() {
+    if (paintedParts.heart && paintedParts.arms && paintedParts.eyes && !rescueButtonCreated) {
+      rescueButtonCreated = true;
+      
+      setTimeout(() => {
+        document.getElementById("finalMessage").classList.add("showMessage");
+      }, 1000);
+      
+      setTimeout(() => {
+        let btn = document.createElement("button");
+        btn.id = "rescueBtn";
+        btn.innerText = "Rescue The Teddy 🧸";
+        btn.onclick = () => goToSection("section3");
+        document.getElementById("gameContainer").appendChild(btn);
+      }, 2500);
+      
+      canvas.classList.add("glow");
+      document.body.style.background = "radial-gradient(circle at top,#ff9bb3,#2a0f18)";
+    }
+  }
+
+  function createHeartParticles(x, y) {
+    const heart = document.createElement("div");
+    heart.className = "sparkleHeart";
+    heart.innerHTML = "💖";
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 3000);
+  }
+
+  window.startPaintGame = function() {
+    document.getElementById("instructionScreen").style.opacity = "0";
+    setTimeout(() => {
+      document.getElementById("instructionScreen").style.display = "none";
+      document.getElementById("gameContainer").style.display = "flex";
+    }, 500);
+  }
+
+  // === SECTION 3: Rescue Game ===
+  const rescueTeddy = document.getElementById("teddy3");
+  const home = document.getElementById("home");
+  const game = document.getElementById("game");
+  const winScreen = document.getElementById("winScreen");
+  const walls = document.querySelectorAll(".wall");
+  const mobileControls = document.getElementById("mobileControls");
+  
+  let posX = 20;
+  let posY = 20;
+  const step = 15;
+
+  window.startRescueGame = function() {
+    document.getElementById("introScreen").style.display = "none";
+    game.style.display = "block";
+    
+    // Show mobile controls on mobile devices
+    if (window.innerWidth <= 768) {
+      mobileControls.style.display = "flex";
+    }
+    
+    posX = 20;
+    posY = 20;
+    rescueTeddy.style.left = posX + "px";
+    rescueTeddy.style.top = posY + "px";
+  }
+
+  function moveTeddy(direction) {
+    if (game.style.display === "none") return;
+    
+    let newX = posX;
+    let newY = posY;
+    
+    switch(direction) {
+      case "up": newY -= step; break;
+      case "down": newY += step; break;
+      case "left": newX -= step; break;
+      case "right": newX += step; break;
+    }
+    
+    const gameRect = game.getBoundingClientRect();
+    if (newX < 0 || newY < 0 || newX > gameRect.width - 40 || newY > gameRect.height - 40) {
+      return;
+    }
+    
+    // Check collision with walls before moving
+    rescueTeddy.style.left = newX + "px";
+    rescueTeddy.style.top = newY + "px";
+    
+    const teddyRect = rescueTeddy.getBoundingClientRect();
+    let collision = false;
+    
+    for (let wall of walls) {
+      const wallRect = wall.getBoundingClientRect();
+      if (teddyRect.right > wallRect.left && teddyRect.left < wallRect.right &&
+          teddyRect.bottom > wallRect.top && teddyRect.top < wallRect.bottom) {
+        collision = true;
+        break;
+      }
+    }
+    
+    if (collision) {
+      // Revert position
+      rescueTeddy.style.left = posX + "px";
+      rescueTeddy.style.top = posY + "px";
+      return;
+    }
+    
+    posX = newX;
+    posY = newY;
+    checkWin();
+  }
+
+  // Keyboard controls
+  document.addEventListener("keydown", (e) => {
+    if (game.style.display === "none") return;
+    
+    switch(e.key) {
+      case "ArrowUp": moveTeddy("up"); break;
+      case "ArrowDown": moveTeddy("down"); break;
+      case "ArrowLeft": moveTeddy("left"); break;
+      case "ArrowRight": moveTeddy("right"); break;
+    }
+  });
+
+  // Mobile touch controls
+  document.querySelectorAll(".control-btn").forEach(btn => {
+    btn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      const direction = btn.dataset.direction;
+      moveTeddy(direction);
+    });
+    
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const direction = btn.dataset.direction;
+      moveTeddy(direction);
+    });
+  });
+
+  function checkWin() {
+    const teddyRect = rescueTeddy.getBoundingClientRect();
+    const homeRect = home.getBoundingClientRect();
+    
+    if (teddyRect.right > homeRect.left && teddyRect.left < homeRect.right &&
+        teddyRect.bottom > homeRect.top && teddyRect.top < homeRect.bottom) {
+      winScreen.style.display = "flex";
+      mobileControls.style.display = "none";
+      
+      setTimeout(() => {
+        if (!document.getElementById("buildBtn")) {
+          let btn = document.createElement("button");
+          btn.id = "buildBtn";
+          btn.innerText = "Let's Build A Teddy 🧸";
+          btn.onclick = () => goToSection("section4");
+          winScreen.appendChild(btn);
+        }
+      }, 500);
+    }
+  }
+
+  window.restart = function() {
+    posX = 20;
+    posY = 20;
+    rescueTeddy.style.left = posX + "px";
+    rescueTeddy.style.top = posY + "px";
+    winScreen.style.display = "none";
+    if (window.innerWidth <= 768) {
+      mobileControls.style.display = "flex";
+    }
+  }
+
+  // === SECTION 4: Build-A-Teddy ===
+  const buildTeddyEl = document.getElementById("teddy4");
+  const heartSlider = document.getElementById("heartSize");
+  const hugSlider = document.getElementById("hugStrength");
+  const message = document.getElementById("message");
+  const heartbeat = document.getElementById("heartbeat");
+
+  heartSlider.oninput = updateTeddy;
+  hugSlider.oninput = updateTeddy;
+
+  function updateTeddy() {
+    let scale = (parseFloat(heartSlider.value) + parseFloat(hugSlider.value)) / 2;
+    buildTeddyEl.style.transform = "scale(" + scale + ")";
+  }
+
+  function typeWriter(text, elementId, delay = 40) {
+    const element = document.getElementById(elementId);
+    element.innerHTML = "";
+    element.style.opacity = "1";
+    let i = 0;
+    function typing() {
+      if (i < text.length) {
+        element.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typing, delay);
+      }
+    }
+    typing();
+  }
+
+  window.buildTeddy = function() {
+    buildTeddyEl.classList.add("glow");
+    heartbeat.play().catch(() => {});
+    
+    setTimeout(() => {
+      typeWriter("You just built someone who loves you exactly like this.", "message");
+    }, 800);
+    
+    setTimeout(() => {
+      const currentText = message.innerHTML;
+      message.innerHTML = currentText + "<br><br>";
+      let i = 0;
+      let txt = "And she's madly in love with you.";
+      function typing() {
+        if (i < txt.length) {
+          message.innerHTML += txt.charAt(i);
+          i++;
+          setTimeout(typing, 40);
+        }
+      }
+      typing();
+    }, 5000);
+    
+    setTimeout(() => {
+      if (!document.getElementById("section5Btn")) {
+        let btn = document.createElement("button");
+        btn.id = "section5Btn";
+        btn.innerText = "Move To Next Page 💕";
+        btn.onclick = () => goToSection("section5");
+        document.getElementById("section4").querySelector(".container").appendChild(btn);
+      }
+    }, 7000);
+  }
+
+  // === SECTION 5: Fill The Heart ===
+  let progress = 0;
+  const heartTeddy = document.getElementById("teddy5");
+  const heart = document.getElementById("heart");
+  const progressFill = document.getElementById("progressFill");
+  const finalMessage = document.getElementById("finalMessage2");
+  const intro = document.getElementById("intro");
+  const progressText = document.getElementById("progressText");
+
+  function handleHeartClick() {
+    if (progress < 100) {
+      progress += 20;
+      heart.style.transform = `translate(-50%,-50%) scale(${progress / 40})`;
+      heart.style.animation = "heartbeat .8s ease";
+      progressFill.style.clipPath = `circle(${progress}% at 50% 50%)`;
+      createSparkle();
+      
+      if (progress >= 100) {
+        setTimeout(() => {
+          heartTeddy.classList.add("dissolve");
+        }, 500);
+        
+        setTimeout(() => {
+          document.body.style.background = "radial-gradient(circle at center,#ffd6ec,#ff9bd2)";
+          intro.style.display = "none";
+          progressText.style.display = "none";
+          finalMessage.style.opacity = 1;
+          
+          setTimeout(() => {
+            if (!document.getElementById("section6Btn")) {
+              let btn = document.createElement("button");
+              btn.id = "section6Btn";
+              btn.innerText = "One More Thing Left 💌";
+              btn.onclick = () => goToSection("section6");
+              document.getElementById("section5").querySelector(".container").appendChild(btn);
+            }
+          }, 1000);
+        }, 2500);
+      }
+    }
+  }
+
+  heartTeddy.addEventListener("click", handleHeartClick);
+  heartTeddy.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    handleHeartClick();
+  });
+
+  function createSparkle() {
+    let sparkle = document.createElement("div");
+    sparkle.classList.add("sparkle");
+    sparkle.innerHTML = "✨";
+    sparkle.style.left = (window.innerWidth / 2 + Math.random() * 100 - 50) + "px";
+    sparkle.style.top = (window.innerHeight / 2) + "px";
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 3000);
+  }
+
+  // === SECTION 6: Final Message ===
+  window.showLove = function() {
+    document.getElementById("loveNote").style.opacity = "1";
+  }
+
+  // === NAVIGATION ===
+  function goToSection(id) {
+    const currentSection = document.querySelector(".section.active");
+    
+    // Hide mobile controls when leaving section 3
+    if (currentSection && currentSection.id === "section3") {
+      mobileControls.style.display = "none";
+    }
+    
+    // Fade out current section
+    if (currentSection) {
+      currentSection.style.opacity = "0";
+      setTimeout(() => {
+        currentSection.classList.remove("active");
+        
+        // Activate new section
+        const newSection = document.getElementById(id);
+        newSection.classList.add("active");
+        
+        // Update background
+        if (id === "section3") {
+          document.body.style.background = "#000814";
+        } else if (id === "section5") {
+          // Section 5 handles its own background transition
+        } else {
+          document.body.style.background = "radial-gradient(circle at top, #2b0d1f, #14080f)";
+        }
+        
+        setTimeout(() => {
+          newSection.style.opacity = "1";
+        }, 50);
+        
+        window.scrollTo(0, 0);
+      }, 600);
+    }
+  }
+
+  window.goToSection = goToSection;
+
+  // Background hearts
+  setInterval(() => {
+    const section3Active = document.getElementById("section3").classList.contains("active");
+    if (!section3Active) {
+      const h = document.createElement("div");
+      h.className = "bgHeart";
+      h.innerHTML = "💖";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.fontSize = (15 + Math.random() * 20) + "px";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 10000);
+    }
+  }, 2000);
+});
+</script>
+<audio id="bgMusic" loop>
+  <source src="romantic.mp3" type="audio/mpeg">
+</audio>
+
+</body>
+</html>
